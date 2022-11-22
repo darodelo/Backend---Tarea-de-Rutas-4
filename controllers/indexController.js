@@ -5,6 +5,8 @@ const { validationResult } = require("express-validator")
 const { Product } = require("../models/farmacia")
 
 
+// RUTAS PRODUCTO
+
 const crearProducto = async (req, res) => {
     try {
         const err = validationResult(req)
@@ -28,6 +30,25 @@ const verProducto = async (req, res) => {
 const vistaUnicaProducto = async (req, res) => {
     const item = await Product.findById(req.params.id)
     res.status(200).json({item})
+}
+
+const editarProducto = async (req, res) => {
+    try {
+        const err = validationResult(req)
+        if (err.isEmpty()) {
+            await Product.findByIdAndUpdate(req.params.id, req.body)
+            res.status(201).json({msg:"Se actualizó el producto"})
+        } else {
+            res.status(501).json({err})
+        }        
+    } catch (error) {
+        res.status(501).json({error})
+    }
+}
+
+const eliminarProducto = async (req, res) => {
+    const item = await Product.findByIdAndDelete(req.params.id)
+    res.status(204).json({msg:"El siguiente item fue eliminado: ", item})
 }
 
 // RUTAS DE USUARIO
@@ -108,4 +129,4 @@ const metodoPost = (req, res) => {
     })
 }
 
-module.exports = { crearProducto, verProducto, vistaUnicaProducto, users, division, suma, esPar, lista, metodoPost }
+module.exports = { crearProducto, verProducto, vistaUnicaProducto, editarProducto, eliminarProducto, users, division, suma, esPar, lista, metodoPost }
